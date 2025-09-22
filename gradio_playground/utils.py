@@ -68,7 +68,6 @@ TYPE_MAP = {
     "boolean": types.Type.BOOLEAN,
     "object": types.Type.OBJECT,
     "array": types.Type.ARRAY,
-    "null": types.Type.NULL,
 }
 
 
