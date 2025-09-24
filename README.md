@@ -1,3 +1,14 @@
+---
+title: AI Studio API Playground
+emoji: 🎛️
+colorFrom: blue
+colorTo: indigo
+sdk: gradio
+sdk_version: 4.44.0
+app_file: app.py
+pinned: false
+---
+
 # AI Studio API Playground
 
 [繁體中文](README.zh-TW.md) | English
@@ -55,17 +66,16 @@ Other notable files:
 3. **Install dependencies.**
    ```bash
    pip install --upgrade pip
-   pip install -r requirements.txt  # or install gradio google-genai google-auth python-dotenv
+   pip install -r requirements.txt
    ```
-   If `requirements.txt` is not available, install the packages shown in the comment.
 4. **Configure environment variables.**
-   Update `gradio_playground/.env` (or export variables in your shell) with a
-   valid Gemini API key:
-   ```env
-   GEMINI_API_KEY=your-real-api-key
-   ```
-   The application uses [`python-dotenv`](https://pypi.org/project/python-dotenv/)
-   to load values from `.env` automatically.
+   Copy `gradio_playground/.env` to `.env` (or export variables in your shell) and
+   set a valid Gemini API key. The app looks for `GOOGLE_API_KEY` by default,
+   matching the Hugging Face Spaces secret name so you can reuse the same value
+   locally and in deployment. Other legacy names such as `GEMINI_API_KEY` are
+   still accepted when present. The application uses
+   [`python-dotenv`](https://pypi.org/project/python-dotenv/) to load values from
+   `.env` automatically.
 
 ## Running the Playground
 Launch the UI using either entry point:
@@ -82,7 +92,25 @@ A lightweight regression script is provided for scenarios captured in
 `test_outputs/aistudio_tests_summary.json`:
 ```bash
 GEMINI_API_KEY=your-real-api-key python tests/run_aistudio_tests.py
+# or equivalently
+GOOGLE_API_KEY=your-real-api-key python tests/run_aistudio_tests.py
 ```
+
+## Deploying to Hugging Face Spaces
+1. **Create a new Gradio Space.** Choose the “Gradio” SDK and link it to a Git
+   repository (public or private depending on your needs).
+2. **Push the project files.** The provided `app.py` exports the `demo` object
+   expected by Spaces, and `requirements.txt` lists the runtime dependencies.
+3. **Configure secrets.** Navigate to *Settings → Secrets* and add
+   `GOOGLE_API_KEY` (or any other supported name listed above) with your Gemini
+   API key.
+4. **Select hardware (optional).** Free CPU tiers are sufficient for testing.
+   Ensure the Space type allows outbound internet access so requests can reach
+   the Gemini API.
+5. **Trigger a build.** When the Space restarts it installs dependencies from
+   `requirements.txt` and launches the Gradio app defined in `app.py`.
+6. **Smoke test the UI.** Exercise several tabs, verify bilingual switching,
+   and ensure generated assets appear under the `playground_outputs/` directory.
 
 ## Localization Workflow
 - All UI strings reside in `gradio_playground/translations_map.json`.
