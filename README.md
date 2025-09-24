@@ -68,32 +68,16 @@ Other notable files:
    pip install --upgrade pip
    pip install -r requirements.txt
    ```
-#### 4. Configure Environment Variables
 
-This application requires a Google Gemini API key to function.
+4. **Configure environment variables.**
+   Copy `gradio_playground/.env` to `.env` (or export variables in your shell) and
+   set a valid Gemini API key. The app looks for `GOOGLE_API_KEY` by default,
+   matching the Hugging Face Spaces secret name so you can reuse the same value
+   locally and in deployment. Other legacy names such as `GEMINI_API_KEY` are
+   still accepted when present. The application uses
+   [`python-dotenv`](https://pypi.org/project/python-dotenv/) to load values from
+   `.env` automatically.
 
-**A) For Local Development:**
-
-1.  In the root directory of the project, create a file named `.env`.
-2.  Add your API key to this file. The application will recognize `GOOGLE_API_KEY`.
-
-    ```
-    # Inside your .env file
-    GOOGLE_API_KEY="your-real-api-key-here"
-    ```
-The application uses the `python-dotenv` library to automatically load this key when you run it locally.
-
-**B) For Hugging Face Space Deployment:**
-
-Do **not** upload your `.env` file. Instead, you must set the API key using Hugging Face's built-in secure storage:
-
-1.  Go to your Space's **Settings** tab.
-2.  Find the **Repository secrets** section.
-3.  Create a new secret with:
-    *   **Name:** `GOOGLE_API_KEY`
-    *   **Value:** Paste your actual Google Gemini API key here.
-
-The Space will automatically load this secret as an environment variable when it runs.
 
 ## Running the Playground
 Launch the UI using either entry point:

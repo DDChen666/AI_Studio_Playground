@@ -25,8 +25,8 @@ for env_path in ENV_PATHS:
         load_dotenv(env_path, override=False)
 load_dotenv(override=False)
 
-# The order matters: We prioritize the Hugging Face standard `GOOGLE_API_KEY` first.
-API_KEY_ENV_CANDIDATES: tuple[str, ...] = (
+API_KEY_ENV_CANDIDATES: Iterable[str] = (
+
     "GOOGLE_API_KEY",
     "GEMINI_API_KEY",
     "GOOGLE_GENAI_API_KEY",
@@ -34,8 +34,8 @@ API_KEY_ENV_CANDIDATES: tuple[str, ...] = (
 )
 
 
-def _find_api_key() -> str | None:
-    """Finds the API key from the environment variables."""
+def _find_api_key() -> Optional[str]:
+
     for env_name in API_KEY_ENV_CANDIDATES:
         raw_value = os.getenv(env_name)
         if raw_value and raw_value.strip():
@@ -44,22 +44,28 @@ def _find_api_key() -> str | None:
 
 
 def get_api_key(*, raise_error: bool = True) -> str:
-    """
-    Return the configured Gemini API key.
 
-    This function supports multiple candidate names for the Gemini API key.
-    We prioritize `GOOGLE_API_KEY` as it aligns with the standard secret
-    naming convention on Hugging Face Spaces, but fall back to legacy
-    names for flexibility when they are present.
+    """Return the configured Gemini API key.
+
+    Hugging Face Spaces typically expose secrets as environment variables.  To
+    support that workflow we prioritise ``GOOGLE_API_KEY`` (the Spaces secret
+    name) and fall back to legacy aliases such as ``GEMINI_API_KEY`` when they
+    are present.
     """
+
+
     api_key = _find_api_key()
     if api_key:
         return api_key
     if not raise_error:
         return ""
+
+    candidates = ", ".join(f"`{name}`" for name in API_KEY_ENV_CANDIDATES)
     raise RuntimeError(
-        f"No Google Gemini API key found. Please set one of the following "
-        f"environment variables: {', '.join(API_KEY_ENV_CANDIDATES)}"
+        "No Google Gemini API key found. Set one of the environment variables "
+        f"{candidates}. When deploying to Hugging Face Spaces, configure the "
+        "secret in the Space settings so it is available as an environment "
+        "variable before launching the app."
     )
 
 
