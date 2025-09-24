@@ -1,3 +1,14 @@
+---
+title: AI Studio API Playground
+emoji: 🎛️
+colorFrom: blue
+colorTo: indigo
+sdk: gradio
+sdk_version: 4.44.0
+app_file: app.py
+pinned: false
+---
+
 # AI Studio API Playground
 
 繁體中文 | [English](README.md)
@@ -55,16 +66,32 @@ gradio_playground/
    pip install --upgrade pip
    pip install -r requirements.txt
    ```
-4. **設定環境變數。**
-   在 `gradio_playground/.env`（或直接在終端機）填入有效的 API 金鑰，系統會依序
-   嘗試以下變數名稱：
-   ```env
-   GEMINI_API_KEY=你的真實金鑰
-   # 或（適用於 Hugging Face Spaces Secrets）
-   GOOGLE_API_KEY=你的真實金鑰
-   ```
-   應用程式會透過 [`python-dotenv`](https://pypi.org/project/python-dotenv/)
-   自動載入 `.env` 中的設定。
+#### 4. **設定環境變數**
+
+本應用程式需要 Google Gemini API 金鑰才能運作。
+
+**A) 本地開發設定：**
+
+1.  在專案的根目錄下，手動建立一個名為 `.env` 的檔案。
+2.  將您的 API 金鑰加入到這個檔案中。應用程式會自動識別 `GOOGLE_API_KEY`。
+
+    ```
+    # 在你的 .env 檔案中
+    GOOGLE_API_KEY="貼上你真實的 API 金鑰"
+    ```
+應用程式使用 `python-dotenv` 套件，在本地端執行時會自動載入此金鑰。
+
+**B) Hugging Face Space 部署設定：**
+
+部署時**請勿**上傳您的 `.env` 檔案。您必須使用 Hugging Face 內建的安全儲存功能來設定金鑰：
+
+1.  前往您 Space 的 **Settings** 分頁。
+2.  找到 **Repository secrets** 區塊。
+3.  點擊 **New secret** 並新增：
+    *   **Name (名稱):** `GOOGLE_API_KEY`
+    *   **Value (值):** 貼上您真實的 Google Gemini API 金鑰。
+
+Space 在執行時會自動將此 Secret 載入為環境變數。
 
 ## 啟動 Gradio Playground
 可使用下列任一指令啟動介面：
