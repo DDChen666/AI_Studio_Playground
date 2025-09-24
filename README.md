@@ -1,3 +1,14 @@
+---
+title: AI Studio API Playground
+emoji: 🎛️
+colorFrom: blue
+colorTo: indigo
+sdk: gradio
+sdk_version: 4.44.0
+app_file: app.py
+pinned: false
+---
+
 # AI Studio API Playground
 
 [繁體中文](README.zh-TW.md) | English
@@ -57,16 +68,32 @@ Other notable files:
    pip install --upgrade pip
    pip install -r requirements.txt
    ```
-4. **Configure environment variables.**
-   Update `gradio_playground/.env` (or export variables in your shell) with a
-   valid Gemini API key. Any of the following names are accepted:
-   ```env
-   GEMINI_API_KEY=your-real-api-key
-   # or, for Hugging Face Spaces secrets
-   GOOGLE_API_KEY=your-real-api-key
-   ```
-   The application uses [`python-dotenv`](https://pypi.org/project/python-dotenv/)
-   to load values from `.env` automatically.
+#### 4. Configure Environment Variables
+
+This application requires a Google Gemini API key to function.
+
+**A) For Local Development:**
+
+1.  In the root directory of the project, create a file named `.env`.
+2.  Add your API key to this file. The application will recognize `GOOGLE_API_KEY`.
+
+    ```
+    # Inside your .env file
+    GOOGLE_API_KEY="your-real-api-key-here"
+    ```
+The application uses the `python-dotenv` library to automatically load this key when you run it locally.
+
+**B) For Hugging Face Space Deployment:**
+
+Do **not** upload your `.env` file. Instead, you must set the API key using Hugging Face's built-in secure storage:
+
+1.  Go to your Space's **Settings** tab.
+2.  Find the **Repository secrets** section.
+3.  Create a new secret with:
+    *   **Name:** `GOOGLE_API_KEY`
+    *   **Value:** Paste your actual Google Gemini API key here.
+
+The Space will automatically load this secret as an environment variable when it runs.
 
 ## Running the Playground
 Launch the UI using either entry point:
