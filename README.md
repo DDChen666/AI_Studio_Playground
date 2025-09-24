@@ -68,6 +68,7 @@ Other notable files:
    pip install --upgrade pip
    pip install -r requirements.txt
    ```
+
 4. **Configure environment variables.**
    Copy `gradio_playground/.env` to `.env` (or export variables in your shell) and
    set a valid Gemini API key. The app looks for `GOOGLE_API_KEY` by default,
@@ -76,6 +77,7 @@ Other notable files:
    still accepted when present. The application uses
    [`python-dotenv`](https://pypi.org/project/python-dotenv/) to load values from
    `.env` automatically.
+
 
 ## Running the Playground
 Launch the UI using either entry point:

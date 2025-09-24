@@ -65,13 +65,14 @@ gradio_playground/
    ```bash
    pip install --upgrade pip
    pip install -r requirements.txt
-   ```
+
 4. **設定環境變數。**
    複製 `gradio_playground/.env` 為 `.env`（或直接在終端機匯出變數），並填入有效的
    Gemini API 金鑰。系統預設尋找 `GOOGLE_API_KEY`，與 Hugging Face Spaces Secrets
    名稱相同，方便本機與部署共用。若偵測到 `GEMINI_API_KEY` 等舊名稱也會自動沿用。
    應用程式會透過 [`python-dotenv`](https://pypi.org/project/python-dotenv/) 自動載入 `.env`
    中的設定。
+
 
 ## 啟動 Gradio Playground
 可使用下列任一指令啟動介面：
