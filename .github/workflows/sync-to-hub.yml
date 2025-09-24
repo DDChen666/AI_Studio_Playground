@@ -1,0 +1,27 @@
+name: Sync to Hugging Face hub
+
+on:
+  push:
+    branches: [main]  # 這裡設定觸發條件：當 main 分支有 push 事件時
+  # 也可以加入 pull_request 等其他觸發條件
+  # pull_request:
+  #   branches: [main]
+
+jobs:
+  sync-to-hub:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 獲取所有 git 歷史紀錄，對於 lfs 很重要
+
+      - name: Push to HF Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }} # 從 GitHub Secrets 讀取我們剛剛設定的 HF_TOKEN
+        run: |
+          # 這裡的 USERNAME 和 SPACE_NAME 要換成你自己的
+          # 你的 Space URL 是: https://huggingface.co/spaces/daniel88888/AI_Studio_API_Playground
+          # 所以 USERNAME 是 daniel88888
+          # SPACE_NAME 是 AI_Studio_API_Playground
+          git push "https://USER:${HF_TOKEN}@huggingface.co/spaces/daniel88888/AI_Studio_API_Playground" --force
