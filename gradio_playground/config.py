@@ -1,7 +1,9 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import os
+from functools import lru_cache
 from pathlib import Path
+from typing import Iterable, Optional
 
 from dotenv import load_dotenv
 
@@ -23,11 +25,60 @@ for env_path in ENV_PATHS:
         load_dotenv(env_path, override=False)
 load_dotenv(override=False)
 
-API_KEY = os.getenv("GEMINI_API_KEY")
-if not API_KEY:
-    raise RuntimeError("Set GEMINI_API_KEY in .env or the shell environment before launching the playground.")
+API_KEY_ENV_CANDIDATES: Iterable[str] = (
+    "GOOGLE_API_KEY",
+    "GEMINI_API_KEY",
+    "GOOGLE_GENAI_API_KEY",
+    "GENAI_API_KEY",
+)
 
-CLIENT = genai.Client(api_key=API_KEY)
+
+def _find_api_key() -> Optional[str]:
+    for env_name in API_KEY_ENV_CANDIDATES:
+        raw_value = os.getenv(env_name)
+        if raw_value and raw_value.strip():
+            return raw_value.strip()
+    return None
+
+
+def get_api_key(*, raise_error: bool = True) -> str:
+    """Return the configured Gemini API key.
+
+    Hugging Face Spaces typically expose secrets as environment variables.  To
+    support that workflow we prioritise ``GOOGLE_API_KEY`` (the Spaces secret
+    name) and fall back to legacy aliases such as ``GEMINI_API_KEY`` when they
+    are present.
+    """
+
+    api_key = _find_api_key()
+    if api_key:
+        return api_key
+    if not raise_error:
+        return ""
+    candidates = ", ".join(f"`{name}`" for name in API_KEY_ENV_CANDIDATES)
+    raise RuntimeError(
+        "No Google Gemini API key found. Set one of the environment variables "
+        f"{candidates}. When deploying to Hugging Face Spaces, configure the "
+        "secret in the Space settings so it is available as an environment "
+        "variable before launching the app."
+    )
+
+
+@lru_cache(maxsize=1)
+def get_client() -> genai.Client:
+    """Return a cached Gemini client instance."""
+
+    return genai.Client(api_key=get_api_key())
+
+
+class _ClientProxy:
+    """Lazily create the Google Gemini client on first access."""
+
+    def __getattr__(self, name: str):
+        return getattr(get_client(), name)
+
+
+CLIENT = _ClientProxy()
 
 SUMMARY_PATH = PROJECT_ROOT / "test_outputs" / "aistudio_tests_summary.json"
 PLAYGROUND_OUTPUT_DIR = PROJECT_ROOT / "playground_outputs"
@@ -50,5 +101,7 @@ __all__ = [
     "SAMPLE_IMAGE",
     "SAMPLE_REPORT",
     "SUMMARY_PATH",
+    "get_api_key",
+    "get_client",
     "types",
 ]
