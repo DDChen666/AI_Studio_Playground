@@ -2,7 +2,6 @@
 import base64
 import mimetypes
 import json
-import os
 import sys
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
@@ -11,6 +10,8 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 from google.genai.errors import ClientError
+
+from gradio_playground.config import get_api_key
 
 
 class BlockedTest(Exception):
@@ -24,11 +25,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
 load_dotenv()
-API_KEY = os.getenv("GEMINI_API_KEY")
-if not API_KEY:
-    raise RuntimeError("GEMINI_API_KEY is not set; load it in .env before running.")
-
-client = genai.Client(api_key=API_KEY)
+client = genai.Client(api_key=get_api_key())
 
 results: list[Dict[str, Any]] = []
 

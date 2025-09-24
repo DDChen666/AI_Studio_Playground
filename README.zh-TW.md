@@ -53,13 +53,15 @@ gradio_playground/
 3. **安裝依賴套件。**
    ```bash
    pip install --upgrade pip
-   pip install -r requirements.txt  # 或安裝 gradio google-genai google-auth python-dotenv
+   pip install -r requirements.txt
    ```
-   若沒有 `requirements.txt`，請依註解中的套件清單安裝。
 4. **設定環境變數。**
-   在 `gradio_playground/.env`（或直接在終端機）填入有效的 API 金鑰：
+   在 `gradio_playground/.env`（或直接在終端機）填入有效的 API 金鑰，系統會依序
+   嘗試以下變數名稱：
    ```env
    GEMINI_API_KEY=你的真實金鑰
+   # 或（適用於 Hugging Face Spaces Secrets）
+   GOOGLE_API_KEY=你的真實金鑰
    ```
    應用程式會透過 [`python-dotenv`](https://pypi.org/project/python-dotenv/)
    自動載入 `.env` 中的設定。
@@ -79,7 +81,22 @@ Gradio 會啟用背景佇列並開啟本機介面，所有產出檔案將寫入�
 情境的快速驗證：
 ```bash
 GEMINI_API_KEY=你的真實金鑰 python tests/run_aistudio_tests.py
+# 或
+GOOGLE_API_KEY=你的真實金鑰 python tests/run_aistudio_tests.py
 ```
+
+## 部署至 Hugging Face Spaces
+1. **建立新的 Gradio Space。** 選擇「Gradio」SDK，並視需求設定公開或私人。
+2. **推送專案檔案。** `app.py` 已曝光 Gradio 所需的 `demo` 物件，
+   `requirements.txt` 則列出執行時需要的套件。
+3. **設定密鑰。** 進入「Settings → Secrets」，新增 `GOOGLE_API_KEY`
+   （或其他支援的變數名稱）並填入 Gemini API 金鑰。
+4. **選擇硬體（可選）。** 免費 CPU 即可應付一般測試，需確保 Space 具有外網連線
+   以便呼叫 Gemini API。
+5. **觸發建置。** Spaces 會在重新啟動時依 `requirements.txt` 安裝套件，並執行
+   `app.py` 載入 Gradio 應用。
+6. **驗證介面。** 測試多個分頁、確認語言切換正常，以及輸出檔案是否寫入
+   `playground_outputs/` 目錄。
 
 ## 在地化流程
 - 所有介面字詞集中於 `gradio_playground/translations_map.json`。
