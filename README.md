@@ -9,7 +9,7 @@ app_file: app.py
 pinned: false
 ---
 
-# AI Studio API Playground
+# AI Studio API Playground!
 
 [繁體中文](README.zh-TW.md) | English
 
